@@ -15,17 +15,17 @@ const geistMono = Geist_Mono({
 
 export default function PaymentStatus() {
     const router = useRouter();
-    const { payment_intent_id } = router.query;
+    const { id } = router.query;
 
     const [status, setStatus] = useState('Loading...');
     const [details, setDetails] = useState(null);
 
     useEffect(() => {
-        if (!payment_intent_id) return;
+        if (!id) return;
 
         const fetchStatus = async () => {
             try {
-                const res = await fetch(`/api/payment-status?id=${payment_intent_id}`);
+                const res = await fetch(`/api/payment-status?id=${id}`);
                 const data = await res.json();
 
                 setStatus(data?.status || 'Unknown');
@@ -36,7 +36,7 @@ export default function PaymentStatus() {
         };
 
         fetchStatus();
-    }, [payment_intent_id]);
+    }, [id]);
 
     return (
         <div className={`${geistSans.className} ${geistMono.className} min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 p-6`}>
