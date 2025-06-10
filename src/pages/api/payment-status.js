@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-    const { id } = req.query;
+    const { id } = req.query; // Already extracts 'id'
 
     const secretKey = process.env.PAYMONGO_SECRET_KEY;
     if (!id || !secretKey) {
@@ -20,12 +20,14 @@ export default async function handler(req, res) {
         const details = json?.data?.attributes;
 
         if (!status) {
-            return res.status(400).json({ status: 'Unknown', details: null });
+            // Include more detailed error for debugging if this happens
+            console.error("PayMongo response missing status:", json);
+            return res.status(400).json({ status: 'Unknown', details: null, rawResponse: json });
         }
 
         return res.status(200).json({ status, details });
     } catch (error) {
-        console.error(error);
+        console.error('API Error fetching payment status:', error);
         return res.status(500).json({ error: 'Failed to fetch status' });
     }
 }

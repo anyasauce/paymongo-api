@@ -15,17 +15,20 @@ const geistMono = Geist_Mono({
 
 export default function PaymentStatus() {
     const router = useRouter();
-    const { id } = router.query;
+    // Extract 'payment_intent_id' from the URL query and alias it to 'id'
+    const { payment_intent_id: id } = router.query; 
 
     const [status, setStatus] = useState('Loading...');
     const [details, setDetails] = useState(null);
 
     useEffect(() => {
+        // Use 'id' (which holds the value of payment_intent_id)
         if (!id) return;
 
         const fetchStatus = async () => {
             try {
-                const res = await fetch(`/api/payment-status?id=${id}`);
+                // The API route expects 'id', which matches our alias
+                const res = await fetch(`/api/payment-status?id=${id}`); 
                 const data = await res.json();
 
                 setStatus(data?.status || 'Unknown');
@@ -36,7 +39,7 @@ export default function PaymentStatus() {
         };
 
         fetchStatus();
-    }, [id]);
+    }, [id]); // Dependency array uses 'id'
 
     return (
         <div className={`${geistSans.className} ${geistMono.className} min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 p-6`}>

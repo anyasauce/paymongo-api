@@ -43,6 +43,7 @@ export default async function handler(req, res) {
         const clientKey = intentData?.data?.attributes?.client_key;
 
         if (!intentId || !clientKey) {
+            console.error('Failed to create payment intent:', intentData);
             return res.status(400).json({ error: 'Failed to create payment intent', details: intentData });
         }
 
@@ -67,6 +68,7 @@ export default async function handler(req, res) {
         const paymentMethodId = methodData?.data?.id;
 
         if (!paymentMethodId) {
+            console.error('Failed to create payment method:', methodData);
             return res.status(400).json({ error: 'Failed to create payment method', details: methodData });
         }
 
@@ -79,6 +81,8 @@ export default async function handler(req, res) {
                     attributes: {
                         payment_method: paymentMethodId,
                         client_key: clientKey,
+                        // This is the crucial part: PayMongo will append payment_intent_id and client_key
+                        // So we provide just the base URL for our status page.
                         return_url: returnUrl || `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/payment-status`,
                     },
                 },
@@ -89,6 +93,7 @@ export default async function handler(req, res) {
         const redirectUrl = attachData?.data?.attributes?.next_action?.redirect?.url;
 
         if (!redirectUrl) {
+            console.error('Failed to get redirect URL:', attachData);
             return res.status(400).json({ error: 'Failed to get redirect URL', details: attachData });
         }
 
@@ -97,7 +102,7 @@ export default async function handler(req, res) {
             payment_method: 'GCash',
         });
     } catch (err) {
-        console.error('Server Error:', err);
+        console.error('Server Error in paymongo.js:', err);
         return res.status(500).json({ error: 'Internal Server Error', details: err.message });
     }
 }
