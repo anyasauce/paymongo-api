@@ -79,7 +79,7 @@ export default async function handler(req, res) {
                     attributes: {
                         payment_method: paymentMethodId,
                         client_key: clientKey,
-                        return_url: returnUrl || 'http://localhost:3000/payment-status',
+                        return_url: returnUrl || `${process.env.APP_URL}/payment-status`,
                     },
                 },
             }),
