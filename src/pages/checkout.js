@@ -37,7 +37,7 @@ export default function Checkout() {
                     email: form.email,
                     amount: amountInCentavos,
                     secretKey: form.secretKey || undefined,
-                    returnUrl: 'https://paymongo-api.vercel.app/payment-status',
+                    returnUrl: undefined,
                 }),
             });
 
