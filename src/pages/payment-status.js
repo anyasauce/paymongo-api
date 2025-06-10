@@ -25,16 +25,11 @@ export default function PaymentStatus() {
 
         const fetchStatus = async () => {
             try {
-                const res = await fetch(`https://api.paymongo.com/v1/payment_intents/${payment_intent_id}`, {
-                    headers: {
-                        Authorization: `Basic ${btoa(process.env.NEXT_PUBLIC_PAYMONGO_SECRET_KEY + ':')}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
+                const res = await fetch(`/api/payment-status?id=${payment_intent_id}`);
                 const data = await res.json();
-                const s = data?.data?.attributes?.status;
-                setStatus(s || 'Unknown');
-                setDetails(data?.data?.attributes);
+
+                setStatus(data?.status || 'Unknown');
+                setDetails(data?.details || null);
             } catch (err) {
                 setStatus('Failed to fetch status');
             }
@@ -52,9 +47,9 @@ export default function PaymentStatus() {
                     <p className="text-sm sm:text-base">
                         <span className="font-semibold">Status:</span>{' '}
                         <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${status === 'succeeded' ? 'bg-green-600' :
-                                status === 'processing' ? 'bg-yellow-500' :
-                                    status === 'failed' ? 'bg-red-600' :
-                                        'bg-gray-600'
+                            status === 'processing' ? 'bg-yellow-500' :
+                                status === 'failed' ? 'bg-red-600' :
+                                    'bg-gray-600'
                             }`}>
                             {status}
                         </span>

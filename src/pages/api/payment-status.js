@@ -1,31 +1,31 @@
-// pages/api/payment-status.js
-
 export default async function handler(req, res) {
-    const { payment_intent_id } = req.query;
+    const { id } = req.query;
 
-    if (!payment_intent_id) {
-        return res.status(400).json({ error: 'Missing payment_intent_id' });
+    const secretKey = process.env.PAYMONGO_SECRET_KEY;
+    if (!id || !secretKey) {
+        return res.status(400).json({ error: 'Missing ID or secret key' });
     }
 
     try {
-        const response = await fetch(`https://api.paymongo.com/v1/payment_intents/${payment_intent_id}`, {
+        const paymongoRes = await fetch(`https://api.paymongo.com/v1/payment_intents/${id}`, {
             headers: {
-                Authorization: `Basic ${Buffer.from(process.env.PAYMONGO_SECRET_KEY + ':').toString('base64')}`,
+                Authorization: `Basic ${Buffer.from(secretKey + ':').toString('base64')}`,
                 'Content-Type': 'application/json',
             },
         });
 
-        const data = await response.json();
+        const json = await paymongoRes.json();
 
-        if (!data.data) {
-            return res.status(404).json({ status: 'Unknown' });
+        const status = json?.data?.attributes?.status;
+        const details = json?.data?.attributes;
+
+        if (!status) {
+            return res.status(400).json({ status: 'Unknown', details: null });
         }
 
-        return res.status(200).json({
-            status: data.data.attributes.status,
-            details: data.data.attributes,
-        });
+        return res.status(200).json({ status, details });
     } catch (error) {
-        return res.status(500).json({ status: 'Error', error: error.message });
+        console.error(error);
+        return res.status(500).json({ error: 'Failed to fetch status' });
     }
 }
