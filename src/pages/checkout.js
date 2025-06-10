@@ -37,7 +37,7 @@ export default function Checkout() {
                     email: form.email,
                     amount: amountInCentavos,
                     secretKey: form.secretKey || undefined,
-                    redirect_url: `${process.env.APP_URL}/payment-status`,
+                    redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment-status`,
                 }),
             });
 
