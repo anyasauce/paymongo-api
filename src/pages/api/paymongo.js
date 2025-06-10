@@ -79,7 +79,7 @@ export default async function handler(req, res) {
                     attributes: {
                         payment_method: paymentMethodId,
                         client_key: clientKey,
-                        return_url: returnUrl || 'https://paymongo-api.vercel.app/payment-status',
+                        return_url: `${returnUrl || `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/payment-status`}?payment_intent_id=${intentId}`,
                     },
                 },
             }),
